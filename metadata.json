@@ -1,0 +1,6 @@
+{
+  "name": "Flat File Form & Viewer",
+  "description": "A lightweight full-stack react flat-file form submission database with real-time log stream viewer and analytics dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
