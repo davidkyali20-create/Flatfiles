@@ -3,6 +3,11 @@ import path from "path";
 import fs from "fs";
 import { createServer as createViteServer } from "vite";
 
+const isProductiveMode = 
+  process.env.NODE_ENV === "production" || 
+  __dirname.includes("dist") || 
+  !fs.existsSync(path.join(process.cwd(), "server.ts"));
+
 const FLAT_FILE = path.join(process.cwd(), "submissions.txt");
 
 // Seed initial values if file does not exist or is empty
@@ -114,14 +119,16 @@ async function startServer() {
   });
 
   // Vite middleware for development
-  if (process.env.NODE_ENV !== "production") {
+  if (!isProductiveMode) {
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",
     });
     app.use(vite.middlewares);
   } else {
-    const distPath = path.join(process.cwd(), "dist");
+    // In production, serve from the pre-built dist directory
+    // If running inside dist/server.cjs, __dirname is already inside 'dist'.
+    const distPath = __dirname.endsWith("dist") ? __dirname : path.join(process.cwd(), "dist");
     app.use(express.static(distPath));
     app.get("*", (req, res) => {
       res.sendFile(path.join(distPath, "index.html"));
